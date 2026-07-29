@@ -12,5 +12,6 @@ public class Category
     public string Name { get; set; } = string.Empty;
 
     [MaxLength(255)]
+    // sllaw 
     public string? Description { get; set; }
 }
