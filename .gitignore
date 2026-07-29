@@ -17,3 +17,4 @@ obj/
 
 # macOS
 .DS_Store
+/StoreManager.Api/appsettings.json
