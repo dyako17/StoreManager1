@@ -13,6 +13,7 @@ public class LoginResult
 public class AuthService(HttpClient http)
 {
     public LoginResult? CurrentUser { get; private set; }
+    public event Action? OnChange;
 
     public async Task<(bool Success, string? ErrorMessage)> LoginAsync(string email, string password)
     {
@@ -21,6 +22,7 @@ public class AuthService(HttpClient http)
         if (response.IsSuccessStatusCode)
         {
             CurrentUser = await response.Content.ReadFromJsonAsync<LoginResult>();
+            OnChange?.Invoke();
             return (true, null);
         }
 
@@ -31,6 +33,7 @@ public class AuthService(HttpClient http)
     public void Logout()
     {
         CurrentUser = null;
+        OnChange?.Invoke();
     }
 
     public bool IsLoggedIn => CurrentUser != null;

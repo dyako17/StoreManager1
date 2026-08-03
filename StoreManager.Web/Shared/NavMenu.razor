@@ -1,8 +1,35 @@
+@inject StoreManager.Web.Services.AuthService AuthService
+@implements IDisposable
+
 <MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">
-        Dashboard
-    </MudNavLink>
-    <MudNavLink Href="categories" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Category">
-        Categories
-    </MudNavLink>
+    @if (AuthService.CurrentUser?.Role == "admin")
+    {
+        <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">
+            Dashboard
+        </MudNavLink>
+        <MudNavLink Href="categories" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Category">
+            Categories
+        </MudNavLink>
+        <MudNavLink Href="pos" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.PointOfSale">
+            POS
+        </MudNavLink>
+    }
+    else if (AuthService.CurrentUser?.Role == "cashier")
+    {
+        <MudNavLink Href="pos" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.PointOfSale">
+            POS
+        </MudNavLink>
+    }
 </MudNavMenu>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AuthService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        AuthService.OnChange -= StateHasChanged;
+    }
+}
