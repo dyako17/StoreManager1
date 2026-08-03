@@ -13,5 +13,6 @@ public class Category
 
     [MaxLength(255)]
     // sllaw 
+    
     public string? Description { get; set; }
 }

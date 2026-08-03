@@ -1,0 +1,63 @@
+﻿@page "/login"
+@using System.ComponentModel.DataAnnotations
+@inject StoreManager.Web.Services.AuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Login</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Class="pa-8" Elevation="3">
+        <MudText Typo="Typo.h5" Class="mb-4">Store Manager Login</MudText>
+
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+
+            <MudTextField Label="Email" @bind-Value="loginModel.Email"
+                          For="@(() => loginModel.Email)" Class="mb-4" />
+
+            <MudTextField Label="Password" @bind-Value="loginModel.Password"
+                          InputType="InputType.Password"
+                          For="@(() => loginModel.Password)" Class="mb-4" />
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">@errorMessage</MudAlert>
+            }
+
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled"
+                       Color="Color.Primary" FullWidth="true">
+                Login
+            </MudButton>
+        </EditForm>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private LoginModel loginModel = new();
+    private string? errorMessage;
+
+    private async Task HandleLogin()
+    {
+        var (success, error) = await AuthService.LoginAsync(loginModel.Email, loginModel.Password);
+
+        if (success)
+        {
+            errorMessage = null;
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = error;
+        }
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Enter a valid email")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Password is required")]
+        public string Password { get; set; } = string.Empty;
+    }
+}
